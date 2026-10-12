@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number | Challenge</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue: #24b5ff;
+            --purple: #a34dff;
+            --text: #f5f7ff;
+            --muted: #aabbe4;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at 10% 90%, #263a9d 0%, transparent 40%),
+                radial-gradient(ellipse at 95% 75%, #54169a 0%, transparent 38%),
+                linear-gradient(135deg, #06142f, #10113c 60%, #160b32);
+            overflow-x: hidden;
+        }
+
+        header {
+            min-height: 78px;
+            padding: 16px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px solid #33447788;
+            background: #ffffff06;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            font-size: clamp(20px, 3vw, 30px);
+            font-weight: 800;
+        }
+
+        .brand span {
+            color: var(--blue);
+        }
+
+        .brand-icon {
+            font-size: 34px;
+        }
+
+        .nav-text {
+            color: var(--muted);
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        main {
+            min-height: calc(100vh - 78px);
+            display: grid;
+            place-items: center;
+            padding: 45px 18px;
+            position: relative;
+        }
+
+        .decoration {
+            position: absolute;
+            color: #8ca9ff;
+            font-size: 18px;
+            font-weight: 700;
+            opacity: .8;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .left-note {
+            left: 7%;
+            top: 26%;
+            transform: rotate(-12deg);
+        }
+
+        .right-note {
+            right: 6%;
+            top: 30%;
+            color: #c47aff;
+            animation-delay: 1s;
+        }
+
+        .game-card {
+            width: 100%;
+            max-width: 610px;
+            padding: clamp(24px, 5vw, 48px);
+            text-align: center;
+            background: linear-gradient(
+                145deg,
+                #ffffff12,
+                #ffffff05
+            );
+            border: 1px solid #786cff;
+            border-radius: 28px;
+            box-shadow:
+                0 0 55px #4f46e522,
+                inset 0 1px 0 #ffffff16;
+            backdrop-filter: blur(18px);
+            position: relative;
+            z-index: 1;
+            animation: appear .7s ease-out;
+        }
+
+        .dice {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 20px;
+            display: grid;
+            place-items: center;
+            font-size: 52px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #25b5ff, #9a3cff);
+            box-shadow: 0 0 35px #714cff55;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(30px, 6vw, 46px);
+            letter-spacing: -1.5px;
+            line-height: 1.2;
+        }
+
+        h1 span {
+            background: linear-gradient(90deg, #27c1ff, #b66aff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            line-height: 1.8;
+            margin: 20px 0 26px;
+        }
+
+        .subtitle strong {
+            color: #b18bff;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 18px;
+            border: 1px solid #6079bb;
+            border-radius: 15px;
+            background: #071735aa;
+            color: white;
+            font-size: 17px;
+            outline: none;
+            transition: .25s;
+        }
+
+        input[type="number"]::placeholder {
+            color: #91a5d0;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px #24b5ff20;
+        }
+
+        button {
+            width: 100%;
+            padding: 17px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            background: linear-gradient(100deg, #19b5f8, #783bff);
+            font-size: 17px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 8px 24px #5c42ff35;
+            transition: transform .2s, filter .2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            filter: brightness(1.12);
+        }
+
+        button:active:not(:disabled) {
+            transform: scale(.98);
+        }
+
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            min-height: 65px;
+            display: grid;
+            place-items: center;
+            margin: 23px 0;
+            padding: 15px;
+            border: 1px solid #42558c;
+            border-radius: 14px;
+            background: #091a3c88;
+            color: #dce7ff;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            text-align: left;
+            padding: 20px;
+            border: 1px solid #354b83;
+            background: #ffffff05;
+            border-radius: 17px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .stat + .stat {
+            border-left: 1px solid #42558c;
+            padding-left: 18px;
+        }
+
+        .stat-icon {
+            font-size: 25px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .hint-text {
+            color: #d2ddf7;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #a98bff;
+            font-size: 14px;
+        }
+
+        .restart {
+            background: linear-gradient(100deg, #079eaa, #387bff);
+        }
+
+        @keyframes float {
+            0%, 100% { translate: 0 0; }
+            50% { translate: 0 -9px; }
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 750px) {
+            header {
+                padding: 16px 5%;
+            }
+
+            .nav-text,
+            .decoration {
+                display: none;
+            }
+
+            main {
+                padding: 28px 15px;
+            }
+
+            .game-card {
+                border-radius: 22px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat + .stat {
+                border-left: none;
+                border-top: 1px solid #42558c;
+                padding: 16px 0 0;
+            }
+        }
+        
+/* Result popup */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(2, 5, 25, 0.85);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.35s ease;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 35px 25px;
+    text-align: center;
+    border: 1px solid #8b70ff;
+    border-radius: 25px;
+    background: linear-gradient(145deg, #172858, #100d32);
+    box-shadow: 0 0 60px #824bff55;
+    animation: popIn 0.45s ease;
+}
+
+.modal-emoji {
+    font-size: 70px;
+    margin-bottom: 12px;
+}
+
+.modal-box h2 {
+    margin: 10px 0;
+    font-size: 36px;
+}
+
+.modal-box p {
+    color: #bdcafa;
+    line-height: 1.7;
+}
+
+.win-title {
+    color: #67f5c0;
+}
+
+.lose-title {
+    color: #ff829e;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="brand">
+            <div class="brand-icon">🎲</div>
+            <div>Guess <span>the Number</span></div>
+        </div>
+        <div class="nav-text">THINK &nbsp; • &nbsp; GUESS &nbsp; • &nbsp; WIN</div>
+    </header>
+
+    <main>
+        <div class="decoration left-note">Good Luck! ✨</div>
+        <div class="decoration right-note">You can do it! 💜</div>
+
+        <section class="game-card">
+            <div class="dice">🎲</div>
+
+            <h1>Guess <span>the Number</span></h1>
+
+            <p class="subtitle">
+                I'm thinking of a number between 1 and 10.<br>
+                You have <strong>3 attempts</strong> to guess it!
+            </p>
+
+            <form method="POST">
+                <input
+                    type="number"
+                    name="guess"
+                    min="1"
+                    max="10"
+                    placeholder="Enter your guess (1–10)"
+                    aria-label="Your number guess"
+                    required
+                    {% if finished %}disabled{% endif %}
+                >
+
+                <button type="submit" {% if finished %}disabled{% endif %}>
+                    🚀 &nbsp; Submit Guess
+                </button>
+            </form>
+
+            <div class="status" role="status" aria-live="polite">
+                {{ message }}
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-icon">🎯</div>
+                    <div>
+                        <div class="stat-label">Attempts Left</div>
+                        <div class="stat-value">{{ attempts }}</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-icon">💡</div>
+                    <div>
+                        <div class="stat-label">Your Hint</div>
+                        <div class="hint-text">
+                            {% if finished %}
+                                {% if 'Correct' in message %}
+                                    Amazing! You cracked the number!
+                                {% else %}
+                                    Try again with a fresh game.
+                                {% endif %}
+                            {% else %}
+                                The number is between 1 and 10.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if finished %}
+            <form method="POST">
+                <input type="hidden" name="action" value="restart">
+                <button type="submit" class="restart">
+                    🔄 &nbsp; Play Again
+                </button>
+            </form>
+            {% endif %}
+
+            <div class="footer">💜 &nbsp; Good luck! You can do it!</div>
+        </section>
+    </main>
+
+{% if finished %}
+<div class="modal-overlay" id="resultModal">
+    <div class="modal-box">
+        {% if 'Correct' in message %}
+            <div class="modal-emoji">🏆</div>
+            <h2 class="win-title">YOU WON!</h2>
+            <p>🎉 Amazing! You guessed the right number!</p>
+            <p>You are a Number Master!</p>
+        {% else %}
+            <div class="modal-emoji">😢</div>
+            <h2 class="lose-title">GAME OVER!</h2>
+            <p>Don't give up! Try again.</p>
+            <p>The correct number was
+                <strong>{{ session.number }}</strong>.
+            </p>
+        {% endif %}
+
+        <form method="POST">
+            <input type="hidden" name="action" value="restart">
+            <button type="submit">🔄 PLAY AGAIN</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById("resultModal");
+
+    if (modal && modal.querySelector(".win-title")) {
+        const colors = [
+            "#ff4d8d", "#ffd166", "#4de2c5",
+            "#8b5cf6", "#38bdf8", "#ffffff"
+        ];
+
+        for (let i = 0; i < 100; i++) {
+            const piece = document.createElement("div");
+            piece.className = "confetti";
+            piece.style.left = Math.random() * 100 + "vw";
+            piece.style.backgroundColor =
+                colors[Math.floor(Math.random() * colors.length)];
+            piece.style.animationDelay = Math.random() * 1.5 + "s";
+            piece.style.animationDuration =
+                (2 + Math.random() * 2) + "s";
+
+            document.body.appendChild(piece);
+            setTimeout(() => piece.remove(), 5000);
+        }
+    }
+</script>
+{% endif %}
+
+</body>
+</html>
